@@ -1,0 +1,4 @@
+{% load user_tags %}
+Username, Birth Day, Eligible, Random Number, BizzFuzz
+{% for user in object_list %}{{ user.username|addslashes }},{{ user.birthday|date:"m-d-Y" }},{% is_eligible user %},{{ user.random_int }},{{ user.random_int|bizz_fuzz }}
+{% endfor %}

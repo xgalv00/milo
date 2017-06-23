@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}{{ user.username|title }} details{% endblock %}
+
+{% block header %}
+    {{ block.super }}
+    <a href="{% url 'users:update' user.pk %}">Edit</a>
+    <a href="{% url 'users:delete' user.pk %}">Delete</a>
+{% endblock %}
+
+{% block content %}
+    <div class="breadcrumbs">
+        <a href="{% url 'users:list' %}">Users</a>
+        <span>Details</span>
+    </div>
+
+    <h1>{{ user.username|title }} details</h1>
+
+{% endblock content %}

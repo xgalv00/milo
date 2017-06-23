@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load user_tags %}
+{% block title %}User list{% endblock %}
+
+{% block content %}
+
+    <h1>Users</h1>
+
+    {% for user in object_list %}
+
+        <div class="user-list">
+            <span class="align-left"><a href="{{ user.get_absolute_url}}">{{ user.username }}</a></span>
+            <span>{{ user.birthday|date }}</span>
+            <span>{% is_eligible user %}</span>
+            <span>{{ user.random_int }}</span>
+            <span class="align-left">{{ user.random_int|bizz_fuzz }}</span>
+        </div>
+
+    {% empty %}
+        <span>No users yet.</span>
+    {% endfor %}
+
+{% endblock content %}
