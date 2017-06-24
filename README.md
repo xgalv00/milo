@@ -18,7 +18,7 @@ Done
 - Create basic views
 - Create template tags
 - Unit testing
-- Create a download link on the list view in [CSV]( https://prnt.sc/fn8iao )
+- Create a download link on the list view in [CSV]( https://drive.google.com/file/d/0B9L1YNDReWRPeVdtMmZPUXByN3c/view?usp=sharing )
 - Add command to extract date from file (python task). Command code is located in users app
 
 TODO (don't know if should be done)
