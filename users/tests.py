@@ -1,15 +1,27 @@
-from datetime import date
-
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.utils import timezone
+from datetime import datetime, timedelta
 
 from users.management.commands.extract_date import get_legal_date
 from users.templatetags.user_tags import bizz_fuzz, is_eligible
 
 
 User = get_user_model()
+
+
+# from https://stackoverflow.com/questions/765797/python-timedelta-in-years
+def yearsago(years, from_date=None):
+    if from_date is None:
+        from_date = datetime.now()
+    try:
+        return from_date.replace(year=from_date.year - years)
+    except ValueError:
+        # Must be 2/29!
+        # go to the First of March then
+        return from_date.replace(month=3, day=1,
+                                 year=from_date.year-years)
 
 
 class ExtractDateTestCase(TestCase):
@@ -86,14 +98,22 @@ class UsersTestCase(TestCase):
         self.assertEqual(bizz_fuzz(5), 'Fuzz')
         self.assertEqual(bizz_fuzz(15), 'BizzFuzz')
         self.assertEqual(bizz_fuzz(16), 16)
-        allow_date = date(timezone.now().year - 13, timezone.now().month, timezone.now().day - 1)
-        allow_far_date = date(timezone.now().year - 14, timezone.now().month, timezone.now().day - 1)
-        block_date = date(timezone.now().year - 13, timezone.now().month, timezone.now().day + 1)
+        tz_now = timezone.now()
+        allow_date = yearsago(13, tz_now)
+        allow_month = yearsago(13, tz_now) + timedelta(days=31)
+        allow_day = yearsago(13, tz_now) + timedelta(days=1)
+        block_date_month = yearsago(13, tz_now) - timedelta(days=31)
+        block_date_day = yearsago(13, tz_now) - timedelta(days=1)
         tu_allow = User.objects.create(username='test', birthday=allow_date)
-        tu_allow_far = User.objects.create(username='test1', birthday=allow_far_date)
-        tu_block = User.objects.create(username='test2', birthday=block_date)
+        tu_allow_month = User.objects.create(username='test12', birthday=allow_month)
+        tu_allow_day = User.objects.create(username='test123', birthday=allow_day)
+        tu_block_month = User.objects.create(username='test1234', birthday=block_date_month)
+        tu_block = User.objects.create(username='test12345', birthday=block_date_day)
+
         self.assertEqual(is_eligible(tu_allow), 'Allowed')
-        self.assertEqual(is_eligible(tu_allow_far), 'Allowed')
+        self.assertEqual(is_eligible(tu_allow_month), 'Allowed')
+        self.assertEqual(is_eligible(tu_allow_day), 'Allowed')
+        self.assertEqual(is_eligible(tu_block_month), 'Blocked')
         self.assertEqual(is_eligible(tu_block), 'Blocked')
 
     def test_views(self):
