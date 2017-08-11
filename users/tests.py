@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.utils import timezone
 from datetime import datetime, timedelta
 
-from users.management.commands.extract_date import get_legal_date
+from users.utils import get_legal_date
 from users.templatetags.user_tags import bizz_fuzz, is_eligible
 
 
